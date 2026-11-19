@@ -1,0 +1,289 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- HERO SECTION -->
+<section
+    class="hero"
+    {% if settings.get('hero_image') %}
+    style="
+        background-image: url('{{ url_for('static', filename='uploads/' + settings.get('hero_image')) }}');
+        background-size: cover;
+        background-position: center center;
+        background-repeat: no-repeat;
+    "
+    {% endif %}
+>
+
+    <div class="hero-overlay"></div>
+
+    <div
+        class="wrap hero-content"
+        style="
+            --hero-text-x: {{ settings.get('hero_text_x', '0')|int }}px;
+            --hero-text-y: {{ settings.get('hero_text_y', '0')|int }}px;
+            --hero-text-color: {{ settings.get('hero_text_color', '#ffffff') }};
+            --hero-title-size: {{ settings.get('hero_title_size', '30px') }};
+            --hero-text-align: {{ settings.get('hero_text_align', 'center') }};
+        "
+    >
+
+        <div class="hero-content-inner">
+
+            <h1>
+                {{ settings.get('hero_title', 'په حکیمي موټرو نندارتون کې ښه راغلاست!') }}
+            </h1>
+
+            <p>
+                {{ settings.get('hero_subtitle', 'د لوړ کیفیت موټرونه، مناسب قیمتونه او باوري خدمت') }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="sliderdots">●　○　○</div>
+
+</section>
+
+
+<!-- SEARCH SECTION -->
+<section class="search wrap">
+
+    <form method="get" action="/">
+
+        <input
+            type="text"
+            name="q"
+            value="{{ q }}"
+            placeholder="د موټر نوم ولټوئ..."
+        >
+
+        <select name="brand">
+            <option value="">ټول برانډونه</option>
+
+            {% for b in brands %}
+                <option
+                    value="{{ b }}"
+                    {% if selected_brand == b %}selected{% endif %}
+                >
+                    {{ b }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <select name="category">
+            <option value="">ټولې کټګورۍ</option>
+
+            {% for c in categories %}
+                <option
+                    value="{{ c }}"
+                    {% if selected_category == c %}selected{% endif %}
+                >
+                    {{ c }}
+                </option>
+            {% endfor %}
+        </select>
+
+        <button class="goldbtn" type="submit">
+            ⌕ لټون
+        </button>
+
+    </form>
+
+</section>
+
+
+<!-- CARS SECTION -->
+<section class="wrap inventory" id="cars">
+
+    <div class="sectionhead">
+        <span></span>
+        <h2>موجود موټرونه</h2>
+        <span></span>
+    </div>
+
+    <div class="cards">
+
+        {% for car in cars %}
+
+            <article class="carcard">
+
+                <div class="carphoto">
+
+                    {% if car.image %}
+
+                        <img
+                            src="{{ url_for('static', filename='uploads/' + car.image) }}"
+                            alt="{{ car.name }}"
+                            loading="lazy"
+                        >
+
+                    {% else %}
+
+                        <div class="placeholder">
+                            🚘
+                        </div>
+
+                    {% endif %}
+
+                    <label>{{ car.status }}</label>
+
+                    <div class="heart">♥</div>
+
+                </div>
+
+                <div class="carinfo">
+
+                    <h3>
+                        {{ car.brand }} {{ car.model or car.name }}
+                    </h3>
+
+                    <div class="specs">
+                        <span>▦ {{ car.year }}</span>
+                        <span>◉ {{ car.mileage }}</span>
+                        <span>♨ {{ car.fuel }}</span>
+                    </div>
+
+                    <div class="cardbottom">
+
+                        <b>{{ car.price }}</b>
+
+                        <a href="{{ url_for('car_detail', car_id=car.id) }}">
+                            تفصیلات　➜
+                        </a>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+        {% else %}
+
+            <p class="empty">
+                اوس مهال موټرونه نشته. ژر به نوي موټرونه اضافه شي.
+            </p>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- BENEFITS SECTION -->
+<section class="benefits">
+
+    <div class="wrap benefitgrid">
+
+        <div>
+            🎧
+            <b>۲۴/۷ ملاتړ</b>
+            <small>تل ستاسو په خدمت کې</small>
+        </div>
+
+        <div>
+            🛡️
+            <b>باوري موټرونه</b>
+            <small>د کیفیت ضمانت</small>
+        </div>
+
+        <div>
+            🤝
+            <b>مناسب قیمت</b>
+            <small>په بازار کې غوره بیه</small>
+        </div>
+
+        <div>
+            🚗
+            <b>ډول ډول موټرونه</b>
+            <small>ستاسو د خوښې انتخاب</small>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ABOUT SECTION -->
+<section class="wrap about" id="about">
+
+    <h2>د حکیمي موټرو نندارتون</h2>
+
+    <p>
+        موږ هڅه کوو چې تاسو ته په مناسب قیمت باکیفیته او باوري موټرونه وړاندې کړو.
+    </p>
+
+</section>
+
+
+<!-- HERO POSITION AND STYLE FIX -->
+<style>
+
+.hero .hero-content {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    min-height: inherit;
+    height: 100%;
+}
+
+.hero .hero-content-inner {
+    position: relative;
+    width: 100%;
+    max-width: 850px;
+    margin: 0 auto;
+
+    transform: translate(
+        var(--hero-text-x, 0px),
+        var(--hero-text-y, 0px)
+    );
+
+    text-align: var(--hero-text-align, center);
+    color: var(--hero-text-color, #ffffff);
+
+    transition: transform 0.25s ease;
+    overflow-wrap: anywhere;
+}
+
+.hero .hero-content-inner h1 {
+    color: var(--hero-text-color, #ffffff) !important;
+    font-size: var(--hero-title-size, 30px) !important;
+    text-align: var(--hero-text-align, center);
+    line-height: 1.8;
+    font-weight: 800;
+    margin: 0 0 15px;
+}
+
+.hero .hero-content-inner p {
+    color: var(--hero-text-color, #ffffff) !important;
+    text-align: var(--hero-text-align, center);
+    font-size: 19px;
+    line-height: 1.9;
+    margin: 0 auto;
+}
+
+@media (max-width: 620px) {
+
+    .hero .hero-content-inner {
+        width: 90%;
+    }
+
+    .hero .hero-content-inner h1 {
+        font-size: min(var(--hero-title-size, 30px), 27px) !important;
+    }
+
+    .hero .hero-content-inner p {
+        font-size: 15px;
+    }
+
+}
+
+</style>
+
+{% endblock %}

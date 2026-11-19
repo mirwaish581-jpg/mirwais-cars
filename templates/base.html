@@ -1,0 +1,261 @@
+```html
+<!doctype html>
+<html lang="ps" dir="rtl">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ settings.get('site_name','Hakimi Cars') }}</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+
+    <style>
+        .header .nav {
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 64px;
+        }
+
+        /* لوګو */
+        .header .logo {
+            position: absolute;
+            right: 0;
+            top: 50%;
+            transform: translateY(-50%);
+            z-index: 2;
+        }
+
+        /* د مینو ځای: له لوګو سره ټکر نه کوي */
+        .header .links {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            width: 100%;
+            box-sizing: border-box;
+            padding-right: 330px;
+            padding-left: 40px;
+            margin: 0;
+        }
+
+        .header .links a {
+            white-space: nowrap;
+            box-sizing: border-box;
+        }
+
+        /* د نور معلومات او مدیر تڼۍ */
+        .header .links .more-info-btn,
+        .header .links .admin-menu-btn {
+            background: #10151b;
+            color: #ffffff;
+            border: 3px solid #e8b83f;
+            border-radius: 10px;
+            padding: 12px 18px;
+            font-weight: 700;
+            transition: background 0.25s ease,
+                        color 0.25s ease,
+                        border-color 0.25s ease;
+        }
+
+        /* د ماوس په ورنږدې کولو سره */
+        .header .links .more-info-btn:hover,
+        .header .links .admin-menu-btn:hover {
+            background: #e8b83f;
+            color: #10151b;
+            border: 3px solid #10151b;
+        }
+
+        /* د مدیر تڼۍ له چپ کونجه ۴۰px دننه */
+        .header .links .admin-menu-btn {
+            margin-left: 40px;
+        }
+
+        .header .menubtn {
+            display: none;
+        }
+
+        /* موبایل */
+        @media (max-width: 768px) {
+
+            .header .nav {
+                justify-content: space-between;
+                min-height: 65px;
+            }
+
+            .header .logo {
+                position: static;
+                transform: none;
+            }
+
+            .header .menubtn {
+                display: block;
+                margin-right: auto;
+            }
+
+            .header .links {
+                display: none;
+                position: absolute;
+                top: 100%;
+                right: 0;
+                left: 0;
+                width: 100%;
+                background: #10151b;
+                padding: 15px;
+                z-index: 1000;
+                flex-direction: column;
+                align-items: stretch;
+                gap: 9px;
+            }
+
+            .header .links.show {
+                display: flex;
+            }
+
+            .header .links a {
+                text-align: center;
+                width: 100%;
+            }
+
+            .header .links .admin-menu-btn {
+                margin-left: 0;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- پورته معلومات -->
+    <div class="topbar">
+        <div class="wrap topinner">
+
+            <span>⌖ {{ settings.get('address','کندهار، افغانستان') }}</span>
+            <span>☎ {{ settings.get('phone','') }}</span>
+            <span>✉ {{ settings.get('email','') }}</span>
+            <span class="social">▶　f　➤　◉</span>
+
+        </div>
+    </div>
+
+    <!-- اصلي سر -->
+    <header class="header">
+
+        <div class="wrap nav">
+
+            <!-- لوګو -->
+            <a class="logo" href="/">
+                <span class="carline">〰</span>
+
+                <span>
+                    Hakimi <b>Cars</b>
+                    <small>Car Showroom</small>
+                </span>
+            </a>
+
+            <!-- موبایل مینو -->
+            <button
+                class="menubtn"
+                type="button"
+                aria-label="مینو خلاصه کړئ"
+                onclick="document.querySelector('.links').classList.toggle('show')"
+            >
+                ☰
+            </button>
+
+            <!-- مینو -->
+            <nav class="links">
+
+                <a href="/">کور</a>
+
+                <a href="/#cars">موټرونه</a>
+
+                <a href="/#categories">کټګورۍ</a>
+
+                <a href="/#about">زموږ په اړه</a>
+
+                <a href="/#contact">اړیکه</a>
+
+                <a class="more-info-btn" href="/#about">
+                    نور معلومات
+                </a>
+
+                <a class="admin-menu-btn" href="/admin/login">
+                    د مدیر برخه
+                </a>
+
+            </nav>
+
+        </div>
+
+    </header>
+
+    <!-- پیغامونه -->
+    {% with messages = get_flashed_messages() %}
+
+        {% if messages %}
+
+            <div class="flash wrap">
+
+                {% for m in messages %}
+                    {{ m }}
+                {% endfor %}
+
+            </div>
+
+        {% endif %}
+
+    {% endwith %}
+
+    <!-- د پاڼې منځپانګه -->
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer id="contact">
+
+        <div class="wrap footgrid">
+
+            <div class="logo footlogo">
+                Hakimi <b>Cars</b>
+            </div>
+
+            <div>
+                <h3>چټک لینکونه</h3>
+
+                <a href="/">کور</a>
+                <a href="/#cars">موټرونه</a>
+                <a href="/#about">زموږ په اړه</a>
+                <a href="/admin/login">د مدیر برخه</a>
+            </div>
+
+            <div>
+                <h3>له موږ سره اړیکه</h3>
+
+                <p>{{ settings.get('phone','') }}</p>
+                <p>{{ settings.get('email','') }}</p>
+                <p>{{ settings.get('address','') }}</p>
+            </div>
+
+            <div>
+                <h3>زموږ خدمتونه</h3>
+
+                <p>باوري موټرونه</p>
+                <p>مناسب قیمتونه</p>
+                <p>۲۴/۷ ملاتړ</p>
+            </div>
+
+        </div>
+
+        <div class="copyright">
+            © 2026 Hakimi Cars — ټول حقوق خوندي دي
+        </div>
+
+    </footer>
+
+    <script src="{{ url_for('static', filename='app.js') }}"></script>
+
+</body>
+</html>
+```

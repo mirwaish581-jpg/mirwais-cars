@@ -1,0 +1,936 @@
+
+{% extends "base.html" %}
+{% block content %}
+
+<main class="wrap adminpage">
+
+    <div class="adminhead">
+        <div>
+            <h1>د اډمین ډشبورډ</h1>
+            <p>ښه راغلاست، {{ session.get('admin_name') }}</p>
+        </div>
+        <a class="darkbtn" href="/admin/logout">وتل</a>
+    </div>
+
+    <div class="stats">
+        <div><b>{{ total }}</b><span>ټول موټرونه</span></div>
+        <div><b>{{ available }}</b><span>موجود موټرونه</span></div>
+        <div><b>{{ sold }}</b><span>پلورل شوي</span></div>
+    </div>
+
+    <div class="admincols">
+
+        <!-- د موټر اضافه کول او سمون -->
+        <section class="panel">
+            <h2>موټر اضافه / سمون</h2>
+
+            <form method="post" action="/admin/car/save"
+                  enctype="multipart/form-data" class="adminform"
+                  id="carForm">
+
+                <input type="hidden" name="id" id="carid">
+
+                <label>د موټر نوم *</label>
+                <input name="name" id="name" required placeholder="Toyota Camry">
+
+                <div class="formrow">
+                    <div>
+                        <label>برانډ</label>
+                        <input name="brand" id="brand">
+                    </div>
+                    <div>
+                        <label>ماډل</label>
+                        <input name="model" id="model">
+                    </div>
+                </div>
+
+                <div class="formrow">
+                    <div>
+                        <label>کال</label>
+                        <input name="year" id="year">
+                    </div>
+                    <div>
+                        <label>قیمت</label>
+                        <input name="price" id="price" placeholder="$32,500">
+                    </div>
+                </div>
+
+                <div class="formrow">
+                    <div>
+                        <label>مزل</label>
+                        <input name="mileage" id="mileage" placeholder="42,000 km">
+                    </div>
+                    <div>
+                        <label>رنګ</label>
+                        <input name="color" id="color">
+                    </div>
+                </div>
+
+                <div class="formrow">
+                    <div>
+                        <label>د تېلو ډول</label>
+                        <select name="fuel" id="fuel">
+                            <option value="پټرول">پټرول</option>
+                            <option value="ډیزل">ډیزل</option>
+                            <option value="هایبرډ">هایبرډ</option>
+                            <option value="برېښنايي">برېښنايي</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>ګیر</label>
+                        <select name="transmission" id="transmission">
+                            <option value="اتومات">اتومات</option>
+                            <option value="مېنویل">مېنویل</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="formrow">
+                    <div>
+                        <label>کټګوري</label>
+                        <select name="category" id="category">
+                            <option value="SUV">SUV</option>
+                            <option value="سیډان">سیډان</option>
+                            <option value="لوکس">لوکس</option>
+                            <option value="Pickup">Pickup</option>
+                            <option value="Hatchback">Hatchback</option>
+                            <option value="سپورټ">سپورټ</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label>حالت</label>
+                        <select name="condition" id="condition">
+                            <option value="کارول شوی">کارول شوی</option>
+                            <option value="نوی">نوی</option>
+                        </select>
+                    </div>
+                </div>
+
+                <label>موجودیت</label>
+                <select name="status" id="status">
+                    <option value="موجود">موجود</option>
+                    <option value="رزرف شوی">رزرف شوی</option>
+                    <option value="پلورل شوی">پلورل شوی</option>
+                </select>
+
+                <hr>
+                <h3>د موټر تخنیکي مشخصات</h3>
+
+                <div class="formrow">
+                    <div>
+                        <label>د انجن اندازه</label>
+                        <input name="engine" id="engine" placeholder="2.0L">
+                    </div>
+                    <div>
+                        <label>حرکت سیستم</label>
+                        <input name="drive" id="drive" placeholder="AWD / 4WD / FWD">
+                    </div>
+                </div>
+
+                <div class="formrow">
+                    <div>
+                        <label>د دروازو شمېر</label>
+                        <input name="doors" id="doors" placeholder="4">
+                    </div>
+                    <div>
+                        <label>د څوکیو شمېر</label>
+                        <input name="seats" id="seats" placeholder="5">
+                    </div>
+                </div>
+
+                <label>د موټر VIN نمبر</label>
+                <input name="vin" id="vin">
+
+                <label>ځانګړي امکانات</label>
+                <textarea name="features" id="features" rows="3"
+                          placeholder="سنروف، کمره، چرم څوکۍ..."></textarea>
+
+                <hr>
+                <h3>د موټر عکسونه</h3>
+
+                <label>تر ۱۰ پورې عکسونه انتخاب کړئ</label>
+                <input type="file" name="images" id="images"
+                       accept="image/png,image/jpeg,image/webp" multiple>
+
+                <p id="imageCount">تر اوسه عکس نه دی انتخاب شوی.</p>
+                <div id="imagePreview" class="image-preview"></div>
+
+                <p class="muted">
+                    د نوي عکسونو په انتخاب سره د موټر د عکسونو ګالري تازه کېږي.
+                </p>
+
+                <label>تفصیل</label>
+                <textarea name="description" id="description" rows="4"></textarea>
+
+                <button type="submit" class="goldbtn full">
+                    ثبتول / تازه کول
+                </button>
+
+                <button type="button" class="lightbtn full"
+                        onclick="clearCarForm()">
+                    نوی فورم
+                </button>
+
+            </form>
+        </section>
+
+        <!-- د موټرونو مدیریت او د ویب‌سایټ تنظیمات -->
+        <section class="panel">
+
+            <h2>د موټرونو مدیریت</h2>
+
+            <div class="tablewrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>موټر</th>
+                            <th>کال</th>
+                            <th>قیمت</th>
+                            <th>حالت</th>
+                            <th>عملیات</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        {% for c in cars %}
+                        <tr {% if loop.index > 3 %}hidden class="extra-car-row"{% endif %}>
+                            <td>{{ c.name }}</td>
+                            <td>{{ c.year }}</td>
+                            <td>{{ c.price }}</td>
+                            <td>{{ c.status }}</td>
+                            <td>
+                                <button type="button" class="smallbtn"
+                                        onclick='editCar({{ c|tojson }})'>
+                                    سمون
+                                </button>
+
+                                <form method="post"
+                                      action="/admin/car/delete/{{ c.id }}"
+                                      onsubmit="return confirm('دا موټر حذف شي؟')">
+                                    <button type="submit" class="smallbtn danger">
+                                        حذف
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% else %}
+                        <tr>
+                            <td colspan="5">تر اوسه موټر نه دی ثبت شوی.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            {% if cars|length > 3 %}
+            <button type="button" class="goldbtn full"
+                    id="toggleCarsBtn" style="margin-top:15px;">
+                ټول موټرونه وګورئ
+            </button>
+            {% endif %}
+
+            <!-- د ویب‌سایټ تنظیمات -->
+            <h2 class="settings-title">د ویب‌سایټ تنظیمات</h2>
+
+            <form method="post" action="/admin/settings"
+                  enctype="multipart/form-data" class="adminform">
+
+                <label>د ویب‌سایټ نوم</label>
+                <input name="site_name"
+                       value="{{ settings.get('site_name','Hakimi Cars') }}">
+
+                <label>د مخکینۍ برخې سرلیک</label>
+                <input name="hero_title" id="heroTitleInput"
+                       value="{{ settings.get('hero_title','') }}">
+
+                <label>فرعي متن</label>
+                <input name="hero_subtitle" id="heroSubtitleInput"
+                       value="{{ settings.get('hero_subtitle','') }}">
+
+                <label>د اړیکې شمېره</label>
+                <input name="phone" value="{{ settings.get('phone','') }}">
+
+                <label>ایمیل</label>
+                <input name="email" value="{{ settings.get('email','') }}">
+
+                <label>پته</label>
+                <input name="address" value="{{ settings.get('address','') }}">
+
+                <hr>
+
+                <h3>د سرلیک د لیکنې تنظیمات</h3>
+
+                <label>د لیکنې عمومي موقعیت</label>
+                <select name="hero_text_align" id="heroTextAlign">
+                    <option value="center"
+                        {% if settings.get('hero_text_align','center') == 'center' %}selected{% endif %}>
+                        منځ
+                    </option>
+                    <option value="right"
+                        {% if settings.get('hero_text_align') == 'right' %}selected{% endif %}>
+                        ښي اړخ
+                    </option>
+                    <option value="left"
+                        {% if settings.get('hero_text_align') == 'left' %}selected{% endif %}>
+                        چپ اړخ
+                    </option>
+                </select>
+
+                <label>د لیکنې رنګ انتخاب کړئ</label>
+
+                <div class="color-control">
+                    <input type="color" name="hero_text_color"
+                           id="heroTextColor"
+                           value="{{ settings.get('hero_text_color','#ffffff') }}">
+                    <span id="heroColorValue">
+                        {{ settings.get('hero_text_color','#ffffff') }}
+                    </span>
+                </div>
+
+                <label>د سرلیک د فونټ اندازه</label>
+                <select name="hero_title_size" id="heroTitleSize">
+                    {% for size in ['20px','22px','24px','26px','28px','30px','32px','36px','40px','44px','48px','50px'] %}
+                    <option value="{{ size }}"
+                        {% if settings.get('hero_title_size','30px') == size %}selected{% endif %}>
+                        {{ size }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <hr>
+
+                <!-- د لیکنې حرکت او مخکتنه -->
+                <h3>د لیکنې د موقعیت کنټرول</h3>
+                <p class="muted">
+                    د لاندې بټنونو په وسیله لیکنه پورته، ښکته، چپ او ښي لوري ته انتقال کړئ.
+                    بدلون به په لاندې عکس کې سمدستي ښکاره شي.
+                </p>
+
+                <div class="position-control">
+                    <label>عمودي حرکت</label>
+
+                    <div class="direction-buttons vertical-buttons">
+                        <button type="button" class="move-btn" id="moveUp">
+                            ↑ پورته انتقال
+                        </button>
+                        <button type="button" class="move-btn" id="moveDown">
+                            ↓ ښکته انتقال
+                        </button>
+                    </div>
+
+                    <div class="slider-line">
+                        <input type="range" id="heroTextY"
+                               name="hero_text_y"
+                               min="-250" max="250" step="1"
+                               value="{{ settings.get('hero_text_y','0') }}">
+
+                        <output id="heroTextYValue">
+                            {{ settings.get('hero_text_y','0') }} px
+                        </output>
+                    </div>
+
+                    <p class="direction-help">
+                        منفي عدد = پورته، مثبت عدد = ښکته
+                    </p>
+                </div>
+
+                <div class="position-control">
+                    <label>افقي حرکت</label>
+
+                    <div class="direction-buttons horizontal-buttons">
+                        <button type="button" class="move-btn" id="moveLeft">
+                            ← چپ لوري ته انتقال
+                        </button>
+                        <button type="button" class="move-btn" id="moveRight">
+                            ښي لوري ته انتقال →
+                        </button>
+                    </div>
+
+                    <div class="slider-line">
+                        <input type="range" id="heroTextX"
+                               name="hero_text_x"
+                               min="-400" max="400" step="1"
+                               value="{{ settings.get('hero_text_x','0') }}">
+
+                        <output id="heroTextXValue">
+                            {{ settings.get('hero_text_x','0') }} px
+                        </output>
+                    </div>
+
+                    <p class="direction-help">
+                        منفي عدد = چپ، مثبت عدد = ښي
+                    </p>
+                </div>
+
+                <button type="button" class="lightbtn full"
+                        id="resetPosition">
+                    موقعیت بېرته صفر ته راوګرځوه
+                </button>
+
+                <!-- ژوندۍ مخکتنه -->
+                <h3 class="preview-heading">د غټ عکس ژوندۍ مخکتنه</h3>
+
+                <p class="muted">
+                    دلته به وګورئ چې د ویب‌سایټ په عمومي عکس کې لیکنه کوم ځای ته انتقالېږي.
+                </p>
+
+                <div class="hero-live-preview"
+                    id="heroLivePreview"
+                    {% if settings.get('hero_image') %}
+                    style="background-image:url('{{ url_for('static', filename='uploads/' + settings.get('hero_image')) }}')"
+                    {% endif %}>
+
+                    <div class="preview-overlay"></div>
+
+                    <div class="preview-text" id="previewText">
+                        <h2 id="previewTitle">
+                            {{ settings.get('hero_title','په حکیمي موټرو نندارتون کې ښه راغلاست!') }}
+                        </h2>
+                        <p id="previewSubtitle">
+                            {{ settings.get('hero_subtitle','د لوړ کیفیت موټرونه، مناسب قیمتونه او باوري خدمت') }}
+                        </p>
+                    </div>
+
+                    <div class="preview-position-marker">
+                        د لیکنې موقعیت
+                    </div>
+                </div>
+
+                <p class="preview-note">
+                    <span id="previewDirection">اوسنی موقعیت: منځ</span>
+                    <span id="previewCoordinates">X: 0px | Y: 0px</span>
+                </p>
+
+                <hr>
+
+                <h3>د لیکنو فونټ تنظیمات</h3>
+
+                <label>د فونټ ډول</label>
+                <select name="font_family">
+                    <option value="Noto Naskh Arabic"
+                        {% if settings.get('font_family','Noto Naskh Arabic') == 'Noto Naskh Arabic' %}selected{% endif %}>
+                        Noto Naskh Arabic
+                    </option>
+                    <option value="Tahoma"
+                        {% if settings.get('font_family') == 'Tahoma' %}selected{% endif %}>
+                        Tahoma
+                    </option>
+                    <option value="Arial"
+                        {% if settings.get('font_family') == 'Arial' %}selected{% endif %}>
+                        Arial
+                    </option>
+                </select>
+
+                <label>د عمومي فونټ اندازه</label>
+                <select name="font_size">
+                    {% for size in ['14px','15px','16px','17px','18px','19px','20px','22px','24px'] %}
+                    <option value="{{ size }}"
+                        {% if settings.get('font_size','17px') == size %}selected{% endif %}>
+                        {{ size }}
+                    </option>
+                    {% endfor %}
+                </select>
+
+                <hr>
+
+                <h3>د ویب‌سایټ ټیمپلېټ</h3>
+
+                <label>د ډیزاین بڼه انتخاب کړئ</label>
+                <select name="template_style">
+                    <option value="gold"
+                        {% if settings.get('template_style','gold') == 'gold' %}selected{% endif %}>
+                        طلایي او تور
+                    </option>
+                    <option value="blue"
+                        {% if settings.get('template_style') == 'blue' %}selected{% endif %}>
+                        آبي او سپین
+                    </option>
+                    <option value="green"
+                        {% if settings.get('template_style') == 'green' %}selected{% endif %}>
+                        شین او سپین
+                    </option>
+                    <option value="dark"
+                        {% if settings.get('template_style') == 'dark' %}selected{% endif %}>
+                        تیاره ډیزاین
+                    </option>
+                </select>
+
+                <hr>
+
+                <h3>د ویب‌سایټ غټ عکس</h3>
+
+                <label>نوی عکس له کمپیوټر څخه انتخاب کړئ</label>
+                <input type="file" name="hero_image"
+                       id="heroImageInput"
+                       accept="image/png,image/jpeg,image/webp">
+
+                {% if settings.get('hero_image') %}
+                    <p>اوسنی عکس:</p>
+                    <img
+                        src="{{ url_for('static', filename='uploads/' + settings.get('hero_image')) }}"
+                        alt="اوسنی غټ عکس"
+                        style="width:100%;max-height:200px;object-fit:cover;border-radius:10px;"
+                    >
+                {% endif %}
+
+                <button type="submit" class="goldbtn full">
+                    ټول تنظیمات خوندي کړه
+                </button>
+
+            </form>
+
+            <hr>
+
+            <!-- د اډمین حساب -->
+            <h2 class="settings-title">د اډمین یوزرنوم او پاسورډ</h2>
+
+            <form method="post" action="/admin/account" class="adminform">
+
+                <label>اوسنی پاسورډ</label>
+                <input type="password" name="current_password"
+                       required autocomplete="current-password">
+
+                <label>نوی یوزرنوم</label>
+                <input name="new_username"
+                       value="{{ session.get('admin_name','') }}"
+                       required autocomplete="username">
+
+                <label>نوی پاسورډ (لږ تر لږه ۸ توري)</label>
+                <input type="password" name="new_password"
+                       minlength="8" required autocomplete="new-password">
+
+                <label>نوی پاسورډ بیا ولیکئ</label>
+                <input type="password" name="confirm_password"
+                       minlength="8" required autocomplete="new-password">
+
+                <button type="submit" class="goldbtn full">
+                    اکاونټ تازه کړه
+                </button>
+
+            </form>
+
+        </section>
+
+    </div>
+
+</main>
+
+<style>
+.color-control {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 10px 0 20px;
+}
+
+.color-control input[type="color"] {
+    width: 75px;
+    height: 48px;
+    padding: 4px;
+    border: 2px solid #c99522;
+    border-radius: 9px;
+    background: #fff;
+    cursor: pointer;
+}
+
+#heroColorValue {
+    direction: ltr;
+    font-weight: bold;
+    font-size: 15px;
+}
+
+.position-control {
+    background: #f5f6f8;
+    border: 1px solid #d5dbe2;
+    padding: 15px;
+    border-radius: 12px;
+    margin: 12px 0 22px;
+}
+
+.position-control label {
+    display: block;
+    font-weight: bold;
+    margin-bottom: 12px;
+}
+
+.direction-buttons {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.direction-buttons button {
+    flex: 1;
+    min-height: 45px;
+    border: 2px solid #c99522;
+    background: #17212b;
+    color: #fff;
+    border-radius: 9px;
+    font-family: inherit;
+    font-weight: 700;
+    cursor: pointer;
+    transition: .2s;
+}
+
+.direction-buttons button:hover {
+    background: #e8b83f;
+    color: #10151b;
+    transform: translateY(-2px);
+}
+
+.slider-line {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    direction: ltr;
+}
+
+.slider-line input[type="range"] {
+    flex: 1;
+    min-width: 0;
+    height: 10px;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #cbd2dc;
+    border: 1px solid #8994a3;
+    border-radius: 20px;
+    outline: none;
+    cursor: pointer;
+}
+
+.slider-line input[type="range"]::-webkit-slider-thumb {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 23px;
+    height: 23px;
+    background: #c99522;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #a77916;
+    cursor: grab;
+}
+
+.slider-line input[type="range"]::-moz-range-thumb {
+    width: 18px;
+    height: 18px;
+    background: #c99522;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow: 0 0 0 2px #a77916;
+    cursor: grab;
+}
+
+.slider-line output {
+    min-width: 75px;
+    padding: 7px 9px;
+    background: #17212b;
+    color: #fff;
+    border-radius: 7px;
+    font-weight: bold;
+    text-align: center;
+    font-size: 14px;
+    direction: ltr;
+}
+
+.direction-help {
+    color: #69717b;
+    font-size: 13px;
+    margin-bottom: 0;
+}
+
+.preview-heading {
+    margin-top: 25px;
+}
+
+.hero-live-preview {
+    width: 100%;
+    height: 300px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 12px;
+    background-color: #17212b;
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    border: 2px solid #c99522;
+}
+
+.preview-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(0,0,0,.38);
+}
+
+.preview-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 85%;
+    max-width: 600px;
+    transform: translate(
+        calc(-50% + var(--preview-x, 0px)),
+        calc(-50% + var(--preview-y, 0px))
+    );
+    text-align: center;
+    color: #fff;
+    z-index: 2;
+    transition: transform .15s ease;
+    overflow-wrap: anywhere;
+}
+
+.preview-text h2 {
+    margin: 0 0 10px;
+    font-size: var(--preview-title-size, 30px);
+    line-height: 1.6;
+}
+
+.preview-text p {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+.preview-position-marker {
+    position: absolute;
+    bottom: 8px;
+    left: 8px;
+    z-index: 3;
+    padding: 5px 9px;
+    color: #fff;
+    background: #10151bcc;
+    border: 1px solid #e8b83f;
+    border-radius: 6px;
+    font-size: 11px;
+}
+
+.preview-note {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 8px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+#previewCoordinates {
+    direction: ltr;
+    color: #a77916;
+}
+
+@media (max-width: 600px) {
+    .slider-line {
+        flex-wrap: wrap;
+    }
+
+    .slider-line input[type="range"] {
+        flex-basis: 100%;
+    }
+
+    .direction-buttons {
+        flex-direction: column;
+    }
+
+    .hero-live-preview {
+        height: 230px;
+    }
+
+    .preview-text h2 {
+        font-size: 22px;
+    }
+}
+</style>
+
+<script>
+/* د موټرونو د لیست ښکاره کول او پټول */
+const toggleCarsBtn = document.getElementById("toggleCarsBtn");
+
+if (toggleCarsBtn) {
+    toggleCarsBtn.addEventListener("click", function () {
+        const extraRows = document.querySelectorAll(".extra-car-row");
+
+        const showAll = toggleCarsBtn.textContent.trim() === "ټول موټرونه وګورئ";
+
+        extraRows.forEach(function (row) {
+            row.hidden = !showAll;
+        });
+
+        toggleCarsBtn.textContent = showAll
+            ? "لږ موټرونه وښایئ"
+            : "ټول موټرونه وګورئ";
+    });
+}
+
+/* د موټر عکسونو انتخاب */
+const imageInput = document.getElementById("images");
+const imageCount = document.getElementById("imageCount");
+const imagePreview = document.getElementById("imagePreview");
+
+if (imageInput) {
+    imageInput.addEventListener("change", function () {
+        const files = Array.from(this.files);
+
+        if (files.length > 10) {
+            alert("یوازې تر ۱۰ پورې عکسونه انتخابولی شئ.");
+            this.value = "";
+            imageCount.textContent = "تر اوسه عکس نه دی انتخاب شوی.";
+            imagePreview.innerHTML = "";
+            return;
+        }
+
+        imageCount.textContent = files.length + " عکسونه انتخاب شول.";
+        imagePreview.innerHTML = "";
+
+        files.forEach((file) => {
+            if (!file.type.startsWith("image/")) return;
+
+            const reader = new FileReader();
+
+            reader.onload = function (event) {
+                const img = document.createElement("img");
+                img.src = event.target.result;
+                img.alt = "د موټر عکس";
+                img.style.width = "85px";
+                img.style.height = "70px";
+                img.style.objectFit = "cover";
+                img.style.borderRadius = "8px";
+                img.style.margin = "4px";
+                imagePreview.appendChild(img);
+            };
+
+            reader.readAsDataURL(file);
+        });
+    });
+}
+
+/* د Hero حرکت کنټرول */
+const heroTextY = document.getElementById("heroTextY");
+const heroTextX = document.getElementById("heroTextX");
+
+const heroTextYValue = document.getElementById("heroTextYValue");
+const heroTextXValue = document.getElementById("heroTextXValue");
+
+const previewText = document.getElementById("previewText");
+const previewCoordinates = document.getElementById("previewCoordinates");
+const previewDirection = document.getElementById("previewDirection");
+
+const moveStep = 10;
+
+function updateHeroPreview() {
+    const x = Number(heroTextX.value);
+    const y = Number(heroTextY.value);
+
+    heroTextXValue.textContent = x + " px";
+    heroTextYValue.textContent = y + " px";
+
+    previewText.style.setProperty("--preview-x", x + "px");
+    previewText.style.setProperty("--preview-y", y + "px");
+
+    previewCoordinates.textContent = "X: " + x + "px | Y: " + y + "px";
+
+    let vertical = y < 0 ? "پورته" : (y > 0 ? "ښکته" : "منځ");
+    let horizontal = x < 0 ? "چپ" : (x > 0 ? "ښي" : "منځ");
+
+    previewDirection.textContent =
+        "اوسنی موقعیت: " + vertical + " / " + horizontal;
+}
+
+/* پورته انتقال */
+document.getElementById("moveUp").addEventListener("click", function () {
+    heroTextY.value = Math.max(-250, Number(heroTextY.value) - moveStep);
+    updateHeroPreview();
+});
+
+/* ښکته انتقال */
+document.getElementById("moveDown").addEventListener("click", function () {
+    heroTextY.value = Math.min(250, Number(heroTextY.value) + moveStep);
+    updateHeroPreview();
+});
+
+/* چپ لوري ته انتقال */
+document.getElementById("moveLeft").addEventListener("click", function () {
+    heroTextX.value = Math.max(-400, Number(heroTextX.value) - moveStep);
+    updateHeroPreview();
+});
+
+/* ښي لوري ته انتقال */
+document.getElementById("moveRight").addEventListener("click", function () {
+    heroTextX.value = Math.min(400, Number(heroTextX.value) + moveStep);
+    updateHeroPreview();
+});
+
+/* د Slider حرکت */
+heroTextY.addEventListener("input", updateHeroPreview);
+heroTextX.addEventListener("input", updateHeroPreview);
+
+/* صفر ته راوګرځول */
+document.getElementById("resetPosition").addEventListener("click", function () {
+    heroTextX.value = 0;
+    heroTextY.value = 0;
+    updateHeroPreview();
+});
+
+/* د لیکنې رنګ */
+const heroTextColor = document.getElementById("heroTextColor");
+const heroColorValue = document.getElementById("heroColorValue");
+
+function updatePreviewColor() {
+    previewText.style.color = heroTextColor.value;
+    heroColorValue.textContent = heroTextColor.value.toUpperCase();
+}
+
+heroTextColor.addEventListener("input", updatePreviewColor);
+
+/* د سرلیک اندازه */
+const heroTitleSize = document.getElementById("heroTitleSize");
+
+heroTitleSize.addEventListener("change", function () {
+    previewText.style.setProperty("--preview-title-size", this.value);
+});
+
+/* د سرلیک او فرعي متن ژوندۍ بدلون */
+document.getElementById("heroTitleInput").addEventListener("input", function () {
+    document.getElementById("previewTitle").textContent = this.value;
+});
+
+document.getElementById("heroSubtitleInput").addEventListener("input", function () {
+    document.getElementById("previewSubtitle").textContent = this.value;
+});
+
+/* د متن د برابرولو موقعیت */
+document.getElementById("heroTextAlign").addEventListener("change", function () {
+    previewText.style.textAlign = this.value;
+});
+
+/* د نوي غټ عکس مخکتنه */
+document.getElementById("heroImageInput").addEventListener("change", function () {
+    const file = this.files && this.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith("image/")) {
+        alert("مهرباني وکړئ د عکس فایل انتخاب کړئ.");
+        this.value = "";
+        return;
+    }
+
+    const reader = new FileReader();
+
+    reader.onload = function (event) {
+        document.getElementById("heroLivePreview").style.backgroundImage =
+            "url('" + event.target.result + "')";
+    };
+
+    reader.readAsDataURL(file);
+});
+
+/* د مخکتنې لومړني تنظیمات */
+updateHeroPreview();
+updatePreviewColor();
+
+previewText.style.textAlign = document.getElementById("heroTextAlign").value;
+previewText.style.setProperty(
+    "--preview-title-size",
+    heroTitleSize.value
+);
+</script>
+
+{% endblock %}

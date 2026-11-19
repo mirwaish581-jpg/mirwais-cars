@@ -1,0 +1,165 @@
+
+{% extends "base.html" %}
+
+{% block content %}
+
+<main class="wrap detail">
+
+    <a href="/" class="back">
+        <i class="fa-solid fa-arrow-right"></i>
+        بېرته موټرونو ته
+    </a>
+
+    {% set images = gallery_images if gallery_images else ([car.image] if car.image else []) %}
+
+    <div class="detailgrid">
+
+        <!-- د موټر عکسونه -->
+        <div class="car-gallery">
+
+            <div class="detailphoto" id="mainCarPhoto">
+
+                {% if images %}
+                    <img
+                        id="mainGalleryImage"
+                        src="{{ url_for('static', filename='uploads/' + images[0]) }}"
+                        alt="{{ car.name }}"
+                    >
+                {% else %}
+                    <div class="placeholder big">🚘</div>
+                {% endif %}
+
+            </div>
+
+            <!-- کوچني عکسونه -->
+            {% if images|length > 1 %}
+                <div class="gallery-thumbs">
+
+                    {% for photo in images %}
+                        <button
+                            type="button"
+                            class="gallery-thumb {% if loop.first %}selected{% endif %}"
+                            onclick="changeCarPhoto(this)"
+                            data-src="{{ url_for('static', filename='uploads/' + photo) }}"
+                        >
+                            <img
+                                src="{{ url_for('static', filename='uploads/' + photo) }}"
+                                alt="د موټر عکس {{ loop.index }}"
+                            >
+                        </button>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+
+            {% if images %}
+                <p class="gallery-count">
+                    <i class="fa-solid fa-images"></i>
+                    د موټر ټول عکسونه: {{ images|length }}
+                </p>
+            {% endif %}
+
+        </div>
+
+        <!-- د موټر معلومات -->
+        <section class="detailinfo">
+
+            <span class="status">{{ car.status or 'موجود' }}</span>
+
+            <h1>
+                {{ car.brand or '' }}
+                {{ car.model or car.name }}
+            </h1>
+
+            <div class="detailprice">
+                {{ car.price or 'د قیمت لپاره اړیکه ونیسئ' }}
+            </div>
+
+            <p class="car-description">
+                {{ car.description or 'د دې موټر په اړه نور معلومات له اډمین څخه ترلاسه کړئ.' }}
+            </p>
+
+            <h2>
+                <i class="fa-solid fa-list-check"></i>
+                د موټر بشپړ مشخصات
+            </h2>
+
+            {% set specs = [
+                ('fa-calendar-days', 'کال', car.year),
+                ('fa-gauge-high', 'مزل', car.mileage),
+                ('fa-gas-pump', 'د تېلو ډول', car.fuel),
+                ('fa-gears', 'ګیر', car.transmission),
+                ('fa-layer-group', 'کټګوري', car.category),
+                ('fa-palette', 'رنګ', car.color),
+                ('fa-circle-check', 'حالت', car.condition),
+                ('fa-car', 'انجن', car.engine),
+                ('fa-road', 'د حرکت سیستم', car.drive),
+                ('fa-door-closed', 'د دروازو شمېر', car.doors),
+                ('fa-chair', 'د څوکیو شمېر', car.seats),
+                ('fa-barcode', 'VIN نمبر', car.vin)
+            ] %}
+
+            <div class="detailfacts">
+                {% for icon, label, val in specs %}
+                    {% if val %}
+                        <div class="detailfact">
+                            <i class="fa-solid {{ icon }}"></i>
+                            <small>{{ label }}</small>
+                            <b>{{ val }}</b>
+                        </div>
+                    {% endif %}
+                {% endfor %}
+            </div>
+
+            {% if car.features %}
+                <div class="featurebox">
+                    <h3>
+                        <i class="fa-solid fa-star"></i>
+                        ځانګړي امکانات
+                    </h3>
+                    <p>{{ car.features }}</p>
+                </div>
+            {% endif %}
+
+            {% set phone = settings.get('phone', '').replace('+', '').replace(' ', '').replace('-', '') %}
+
+            {% if phone %}
+                <a
+                    class="goldbtn"
+                    href="https://wa.me/{{ phone }}"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                >
+                    <i class="fa-brands fa-whatsapp"></i>
+                    د WhatsApp له لارې اړیکه
+                </a>
+            {% endif %}
+
+        </section>
+
+    </div>
+
+</main>
+
+<script>
+function changeCarPhoto(button) {
+
+    const mainImage = document.getElementById('mainGalleryImage');
+
+    if (!mainImage) return;
+
+    const newImage = button.getAttribute('data-src');
+
+    if (!newImage) return;
+
+    mainImage.src = newImage;
+
+    document.querySelectorAll('.gallery-thumb').forEach(function(item) {
+        item.classList.remove('selected');
+    });
+
+    button.classList.add('selected');
+}
+</script>
+
+{% endblock %}

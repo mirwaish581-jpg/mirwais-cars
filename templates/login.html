@@ -1,0 +1,165 @@
+```html
+{% extends "base.html" %}
+
+{% block content %}
+
+<main class="loginpage">
+
+    <form
+        class="loginbox"
+        method="post"
+        autocomplete="off"
+        id="adminLoginForm"
+    >
+
+        <div class="logo">
+            Hakimi <b>Cars</b>
+        </div>
+
+        <h2>د اډمین ننوتل</h2>
+
+        <label for="username">یوزرنوم</label>
+
+        <input
+            id="username"
+            name="username"
+            type="text"
+            required
+            autocomplete="off"
+            autocapitalize="none"
+            spellcheck="false"
+            placeholder="خپل یوزرنوم ولیکئ"
+            value=""
+        >
+
+        <label for="password">پاسورډ</label>
+
+        <div class="password-wrapper">
+
+            <input
+                id="password"
+                name="password"
+                type="password"
+                required
+                autocomplete="new-password"
+                placeholder="خپل پاسورډ ولیکئ"
+                value=""
+            >
+
+            <button
+                type="button"
+                class="show-password-btn"
+                id="showPasswordBtn"
+                aria-label="پاسورډ ښکاره کړئ"
+            >
+                <span id="eyeIcon">👁</span>
+                <span id="eyeText">Show</span>
+            </button>
+
+        </div>
+
+        <button class="goldbtn full" type="submit">
+            ننوتل
+        </button>
+
+        <a href="/">
+            بېرته ویب‌سایټ ته
+        </a>
+
+    </form>
+
+</main>
+
+<style>
+    .password-wrapper {
+        position: relative;
+        width: 100%;
+        display: flex;
+        align-items: center;
+    }
+
+    .password-wrapper input {
+        width: 100%;
+        padding-left: 100px !important;
+        box-sizing: border-box;
+    }
+
+    .show-password-btn {
+        position: absolute;
+        left: 10px;
+        top: 50%;
+        transform: translateY(-50%);
+        border: none;
+        background: transparent;
+        color: #e8b83f;
+        font-weight: 700;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        padding: 6px;
+        z-index: 2;
+    }
+
+    .show-password-btn:hover {
+        color: #c99522;
+    }
+
+    .show-password-btn span {
+        font-size: 14px;
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+
+        const username = document.getElementById("username");
+        const password = document.getElementById("password");
+
+        const showButton = document.getElementById("showPasswordBtn");
+        const eyeIcon = document.getElementById("eyeIcon");
+        const eyeText = document.getElementById("eyeText");
+
+        const form = document.getElementById("adminLoginForm");
+
+        // د ننوتلو خانې تشې ساتل
+        function clearLoginFields() {
+            username.value = "";
+            password.value = "";
+            password.type = "password";
+
+            eyeIcon.textContent = "👁";
+            eyeText.textContent = "Show";
+        }
+
+        clearLoginFields();
+
+        // د پاسورډ ښکاره کول او پټول
+        showButton.addEventListener("click", function () {
+
+            if (password.type === "password") {
+
+                password.type = "text";
+                eyeIcon.textContent = "🙈";
+                eyeText.textContent = "Hide";
+
+            } else {
+
+                password.type = "password";
+                eyeIcon.textContent = "👁";
+                eyeText.textContent = "Show";
+
+            }
+
+        });
+
+        // د پاڼې له بېرته پرانیستل کېدو وروسته د خانې پاکول
+        window.addEventListener("pageshow", function () {
+            clearLoginFields();
+        });
+
+        // د فورم له لېږلو مخکې د کارن لیکل شوي معلومات مه پاکوه
+    });
+</script>
+
+{% endblock %}
